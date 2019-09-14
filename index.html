@@ -11,6 +11,30 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
   <meta name="theme-color" content="#fafafa">
+  <style>
+    body {
+  font-family: 'Avenir';
+}
+
+.question{
+  font-weight: 600;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+.answers {
+  margin-bottom: 20px;
+}
+.answers label{
+  display: block;
+}
+
+#submit {
+  width: 350px;
+  display: block;
+  margin: auto;
+  margin-bottom: 30px;
+}
+  </style>
 </head>
 
 <body>
@@ -55,6 +79,504 @@
   <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.4.1.min.js"><\/script>')</script>
   <script src="js/plugins.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    (function() {
+    function buildQuiz() {
+        // we'll need a place to store the HTML output
+        const output = [];
+        myQuestions = shuffle(myQuestions);
+        // for each question...
+        myQuestions.forEach((currentQuestion, questionNumber) => {
+            // we'll want to store the list of answer choices
+            const answers = [];
+
+            // and for each available answer...
+            for (letter in currentQuestion.answers) {
+                // ...add an HTML radio button
+                answers.push(
+                    `<label>
+            <input type="radio" name="question${questionNumber}" value="${letter}">
+            
+            ${currentQuestion.answers[letter]}
+          </label>`
+                );
+            }
+
+            // add this question and its answers to the output
+            output.push(
+                `<div class="question"><strong>${questionNumber + 1})</strong> ${currentQuestion.question} </div>
+        <div class="answers"> ${answers.join("")} </div>`
+            );
+        });
+
+        // finally combine our output list into one string of HTML and put it on the page
+        quizContainer.innerHTML = output.join("");
+    }
+
+    function showResults() {
+        // gather answer containers from our quiz
+        const answerContainers = quizContainer.querySelectorAll(".answers");
+
+        // keep track of user's answers
+        let numCorrect = 0;
+
+        // for each question...
+        myQuestions.forEach((currentQuestion, questionNumber) => {
+            // find selected answer
+            const answerContainer = answerContainers[questionNumber];
+            const selector = `input[name=question${questionNumber}]:checked`;
+            const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+            // if answer is correct
+            if (userAnswer === currentQuestion.correctAnswer) {
+                // add to the number of correct answers
+                numCorrect++;
+
+                // color the answers green
+                answerContainers[questionNumber].style.color = "lightgreen";
+            } else {
+                // if answer is wrong or blank
+                // color the answers red
+                answerContainers[questionNumber].style.color = "red";
+            }
+        });
+
+        // show number of correct answers out of total
+        let percent = (numCorrect / myQuestions.length) * 100;
+        resultsContainer.innerHTML = `<h3>${percent.toFixed(2)}%</h3><h5>${numCorrect} out of ${myQuestions.length}</h5>`;
+    }
+
+    function shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    const quizContainer = document.getElementById("quiz");
+    const resultsContainer = document.getElementById("results");
+    const submitButton = document.getElementById("submit");
+    let myQuestions = [
+        {
+            question: "The Air Traffic Organization (ATO) is managed by a(n) _________.",
+            answers: {
+                a: "Administrator",
+                b: "Associate Administrator",
+                c: "Vice President",
+                d: "Chief Operating Officer"
+            },
+            correctAnswer: "d"
+        },
+        {
+            question: "According to their location, ATO air traffic control facilities are assigned to one of _________.",
+            answers: {
+                a: "three service areas.",
+                b: "nine regions",
+                c: "four FAA Headquarters divisions",
+                d: "eleven FAA primary offices"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "The primary Navigations Aids (NAVAIDs) for the nation's aiways in the National Airspace System (NAS) are ________.",
+            answers: {
+                a: "Nondirectional Beacons (NBDs)",
+                b: "VORs/VORTACs",
+                c: "marker beacons",
+                d: "Instrument Landing Systems (ILSs)"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "The primary mission of the Traffic Management System (TMS) is to ________.",
+            answers: {
+                a: "balance system demand with system capacity",
+                b: "regulate air traffic procedures",
+                c: "ascertain controller stress and workload",
+                d: "implement the use of state-of-the-art equipment"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "The operation of the TMS is the responsibility of the ________.",
+            answers: {
+                a: "ARTCC Traffic Management Unit (TMU) for each area",
+                b: "Air Traffic Control System Command Center (ATCSCC)",
+                c: "Air Traffic Manager",
+                d: "Central Altitude Reservation Facility"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "Thr primary function of the Traffic Management Unit (TMU) is to ________.",
+            answers: {
+                a: "monitor and balance traffic flows within their area of responsibility in accordance with traffic management directives",
+                b: "ensure maximum efficiency in the utilization of the total National Airspace System, thereby producing a safe, orderly, and expeditious flow of traffic",
+                c: "manage the flow of air traffic throughout the National Airspace System to achieve optimum use of the navigable airspace and minimize the effect of air traffic delays",
+                d: "manage the flow of tower traffic be ensuring that traffic demand does not exceed operationally minimal levels of traffic"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "The primary purpose of the Air Traffic Control System is to ________.",
+            answers: {
+                a: "prevent collision and organize and expedite the flow of traffic",
+                b: "provide traffic advisories",
+                c: "monitor holding patterns",
+                d: "advise pilots of altitude deviations of 300 feet or more"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "The air traffic facility that has no direct authority over Instrumental Flight Rules (IFR) or Visual Flight Rules (VFR) traffic is the ________.",
+            answers: {
+                a: "Airport Traffic Control Tower (ATCT)",
+                b: "Terminal Rader Approach Control (TRACON)",
+                c: "Flight Service Station (FSS)",
+                d: "Air Route Traffic Control Center (ARTCC)"
+            },
+            correctAnswer: "c"
+        },
+        {
+            question: "The facility primarily responsible for conducting pilot briefings is the ________.",
+            answers: {
+                a: "ATCT",
+                b: "ARTCC",
+                c: "ATCSCC",
+                d: "FSS"
+            },
+            correctAnswer: "d"
+        },
+        {
+            question: "Which position in the Flight Service Station (FSS) records and disseminates Hazardous Inflight Weather Advisory Service (HWAS) summaries?",
+            answers: {
+                a: "In Flight",
+                b: "Broadcast",
+                c: "Flight Data/NOTAM Coordinator",
+                d: "Preflight"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "Which of the following duties is not the function of the Clearance Delivery position in the tower",
+            answers: {
+                a: "Operating communication equipment",
+                b: "Processing and forwarding flight plan information",
+                c: "Compiling statistical data",
+                d: "Issuing clearances and ensuring accuracy of readback"
+            },
+            correctAnswer: "c"
+        },
+        {
+            question: "The ________ position in the ATC terminal option is normally responsible for issuing control instructions to aircraft and vehicles operating on the airport movement area (other than the active runways).",
+            answers: {
+                a: "Local Control",
+                b: "Ground Control",
+                c: "Clearance Delivery",
+                d: "Flight Data"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "In a Terminal Radar Approach Control (TRACON) facility, who has the responsibility for the safe and efficient operation os a sector",
+            answers: {
+                a: "Facility Manager",
+                b: "Radar Position",
+                c: "Radar Associate Position",
+                d: "Radar Team"
+            },
+            correctAnswer: "d"
+        },
+        {
+            question: "The ATC facility that provides air traffic control services to aircraft on IFR flight plans during the en route phase of flight is  ________.",
+            answers: {
+                a: "ATCT",
+                b: "FSS",
+                c: "TRACON",
+                d: "ARTCC"
+            },
+            correctAnswer: "d"
+        },
+        {
+            question: "The only en route sector team member whose duties do not include accepting handoffs is the ________ position.",
+            answers: {
+                a: "Radar Coordinator",
+                b: "Radar Associate",
+                c: "Radar",
+                d: "Radar Fight Data"
+            },
+            correctAnswer: "d"
+        },
+        {
+            question: "When considering the duty priority of an ait traffic controller, first priority is given to ________.",
+            answers: {
+                a: "coordinating",
+                b: "issuing traffic",
+                c: "separating traffic",
+                d: "vectoring"
+            },
+            correctAnswer: "c"
+        },
+        {
+            question: "Nonradar separation is used in preference to radar separation when ________.",
+            answers: {
+                a: "an operational advantage will be gained",
+                b: "the aircraft is not transponder equipped",
+                c: "secondary radar is out of service",
+                d: "controller is not radar qualified"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "Presidential aircraft have priority over Flight Check aircraft is an example of ________.",
+            answers: {
+                a: "Operational Priority",
+                b: "Procedural Preference",
+                c: "Duty Priority",
+                d: "Additional Services"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "All of gthe following represent uses of non-movement area EXCEPT:",
+            answers: {
+                a: "Loading passengers",
+                b: "Landing",
+                c: "Loading cargo",
+                d: "Parking"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "A runway with magnetic heading of 003 degrees should be designated Runway ________.",
+            answers: {
+                a: "00",
+                b: "1",
+                c: "03",
+                d: "36"
+            },
+            correctAnswer: "d"
+        },
+        {
+            question: "An airport with three parallel runways with magnetic heading of 216 degrees would have runway designations of ________.",
+            answers: {
+                a: "22R, 22C, 22L",
+                b: "21R, 21C, 21L",
+                c: "21R, 21L, 22C",
+                d: "22R, 22L, 21"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "What runway marking extends the full-length runway pavement area ________.",
+            answers: {
+                a: "Runway side stripes",
+                b: "Dashed side stripes",
+                c: "Runway centerlines",
+                d: "Dashed centerlines"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "A(n) ________ consists of white arrows which point in the direction of landing, replacing the runway centerline, and begining at the non-landing portion to the threshold bar.",
+            answers: {
+                a: "stabilized area",
+                b: "abandoned runway",
+                c: "relocated threshold",
+                d: "displaced threshold"
+            },
+            correctAnswer: "d"
+        },
+        {
+            question: "A ________ is identified by large chevrons pointing in the direction of the threshold.",
+            answers: {
+                a: "blast pad",
+                b: "closed runway",
+                c: "relocated threshold",
+                d: "dislocated threshold"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "Runway ________ provide alignment guidance during takeoffs and landings, and consist of a line of uniformly spaced stripes and gaps.",
+            answers: {
+                a: "aiming points",
+                b: "centerlines",
+                c: "thresholds",
+                d: "touchdown zones"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "What color are taxiway edge lights?",
+            answers: {
+                a: "White",
+                b: "Amber",
+                c: "Blue",
+                d: "Red"
+            },
+            correctAnswer: "c"
+        },
+        {
+            question: "Lighted land airports have rotating beacons that ________.",
+            answers: {
+                a: "flash white and green",
+                b: "flash two white and one green",
+                c: "flash white",
+                d: "flash green"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "Touchdown Zone Lighting (TDZL) ans Runway Centerline Lights System (RCLS) are two types of ________.",
+            answers: {
+                a: "runway end identifier lights",
+                b: "taxiway lights",
+                c: "in-runway lights",
+                d: "runway edge lights"
+            },
+            correctAnswer: "c"
+        },
+        {
+            question: "Threshold lights are ________.",
+            answers: {
+                a: "white/yellow",
+                b: "green/yellow",
+                c: "white/red",
+                d: "green/red"
+            },
+            correctAnswer: "d"
+        },
+        {
+            question: "The basic means to transition from instrument flight to visual flight for landing is provided by the ________.",
+            answers: {
+                a: "Runway end identifier lights",
+                b: "Runway Centerline lights",
+                c: "Approach Light System",
+                d: "Visual Approach Slope Indicator lights"
+            },
+            correctAnswer: "c"
+        },
+        {
+            question: "Holding an aircraft is NOT used for ________.",
+            answers: {
+                a: "en route traffic",
+                b: "position relief",
+                c: "flow control",
+                d: "spacing"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "The minimum vertical separation required for aircraft above FL600 is ________ feet.",
+            answers: {
+                a: "10,000",
+                b: "5,000",
+                c: "2,000",
+                d: "1,000"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "The minimum vertical separation for IFR flight at and below FL410 is ________ feet.",
+            answers: {
+                a: "5,000",
+                b: "2,000",
+                c: "1,000",
+                d: "4,000"
+            },
+            correctAnswer: "c"
+        },
+        {
+            question: "Aircraft that are not equipped with the required vertical navication avionics must be separated by ________ feet as they climb or descend through the RVSM altitudes.",
+            answers: {
+                a: "4,000",
+                b: "2,000",
+                c: "1,000",
+                d: "500"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "To clear aircraft to hold over different fixes at the same altitude, you must ensure that all ________.",
+            answers: {
+                a: "aircraft are cleared to make right turns.",
+                b: "holding pattern airspace areas do not overlap.",
+                c: "leg lengths are specified in minuted.",
+                d: "aircraft are using the same NAVAID to hold from."
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "What type of separation is defined as the spacing of aircraft at the same altitude by a minimum distance expressed in units of time or miles ________.",
+            answers: {
+                a: "Lateral",
+                b: "Longitudinal",
+                c: "Vertical",
+                d: "Visual"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "Standard radar separation provided by en route facility between two aircraft at FL270 is ________ miles.",
+            answers: {
+                a: "3",
+                b: "5",
+                c: "10",
+                d: "20"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "Terminal radar separation minima, at a facility using Single Sensor ASR or Digital Terminal Automation System (DTAS), require that when two aircraft are less than 40 miles from the antenna, ________ separation is required; when either aircract is 40 miles or more from the antenna, ________ separation is required.",
+            answers: {
+                a: "3 miles; 5 miles",
+                b: "5 miles; 3 miles",
+                c: "10 minutes; 20 miles",
+                d: "20 minutes; 10 miles"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "Controllers may use visual separation ________.",
+            answers: {
+                a: "up to, but not including, FL180",
+                b: "at FL180 and below",
+                c: "up to and including 18,000 feet MSL",
+                d: "up to but not including 18,000 feel AGL"
+            },
+            correctAnswer: "a"
+        },
+        {
+            question: "Runway separation is applied by ________ controllers.",
+            answers: {
+                a: "Air Route Traffic Control Center (ARTCC)",
+                b: "Air Traffic Control Towers (ATCT)",
+                c: "Terminal Radar Approach Control (TRACON)",
+                d: "Flight Service Station (FSS)"
+            },
+            correctAnswer: "b"
+        },
+        {
+            question: "With suitable landmarks to determine distance, separate a Category I aircraft departing behind a Category III by ________.",
+            answers: {
+                a: "3,000 feet",
+                b: "4,500 feet",
+                c: "6,000 feet",
+                d: "9,000 feet"
+            },
+            correctAnswer: "c"
+        },
+    ];
+
+    // display quiz right away
+    buildQuiz();
+
+    // on submit, show results
+    submitButton.addEventListener("click", showResults);
+})();
+  </script>
 
 </body>
 
